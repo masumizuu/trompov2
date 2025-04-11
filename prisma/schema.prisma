@@ -1,0 +1,322 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+///////////// USER ENTITIES /////////////
+
+model User {
+  user_id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  first_name      String
+  last_name       String
+  email           String?  @unique
+  password        String?
+  phone_number    String?
+  user_type       UserType
+  user_auth       UserAuth
+  is_verified     Boolean  @default(false)
+  profile_picture String?
+  date_registered DateTime @default(now())
+
+  admin             Admin?
+  customer          Customer?
+  business_owner    BusinessOwner?
+  user_verification UserVerification?
+  messagesSent      Message[]                 @relation("MessagesSent")
+  conversations     ConversationParticipant[]
+  saved_businesses  SavedBusiness[]
+
+  @@map("users")
+}
+
+// Enum for user_type
+enum UserType {
+  ADMIN
+  BUSINESSOWNER
+  CUSTOMER
+}
+
+// Enum for user_auth
+enum UserAuth {
+  GOOGLE
+  EMAIL
+}
+
+model Admin {
+  user_id             String                 @id @map("_id") @db.ObjectId
+  permissions         String?
+  reviewed_users      UserVerification[]
+  reviewed_businesses BusinessVerification[]
+
+  user User @relation(fields: [user_id], references: [user_id])
+
+  @@map("admins")
+}
+
+model BusinessOwner {
+  user_id    String     @id @map("_id") @db.ObjectId
+  businesses Business[]
+
+  user User @relation(fields: [user_id], references: [user_id])
+
+  @@map("business_owners")
+}
+
+model Customer {
+  user_id          String @id @map("_id") @db.ObjectId
+  saved_businesses Json?
+
+  user         User          @relation(fields: [user_id], references: [user_id])
+  disputes     Dispute[]     @relation("Complaints")
+  reviews      Review[]
+  transactions Transaction[]
+
+  @@map("customers")
+}
+
+model SavedBusiness {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  user_id     String   @db.ObjectId
+  business_id String   @db.ObjectId
+  saved_at    DateTime @default(now())
+
+  user     User     @relation(fields: [user_id], references: [user_id])
+  business Business @relation(fields: [business_id], references: [business_id])
+
+  @@unique([user_id, business_id])
+  @@map("saved_businesses")
+}
+
+///////////// BUSINESS ENTITIES /////////////
+
+model Business {
+  business_id     String   @id @default(auto()) @map("_id") @db.ObjectId
+  owner_id        String   @db.ObjectId
+  business_name   String
+  banner          String?
+  logo            String?
+  description     String?
+  category        String?
+  address         String?
+  location_id     String?  @db.ObjectId
+  contact_number  String?
+  website_url     String?
+  is_verified     Boolean  @default(false)
+  date_registered DateTime @default(now())
+
+  // Relations
+  owner                 BusinessOwner         @relation(fields: [owner_id], references: [user_id])
+  categoryRef           Category?             @relation("CategoryByName", fields: [category], references: [category_name])
+  location              Location?             @relation(fields: [location_id], references: [location_id])
+  sellables             Sellable[]
+  transactions          Transaction[]
+  reviews               Review[]
+  business_verification BusinessVerification?
+  saved_by              SavedBusiness[]
+
+  @@map("businesses")
+}
+
+model Category {
+  category_id   String     @id @default(auto()) @map("_id") @db.ObjectId
+  category_name String     @unique
+  businesses    Business[] @relation("CategoryByName")
+
+  @@map("categories")
+}
+
+model Location {
+  location_id String     @id @default(auto()) @map("_id") @db.ObjectId
+  city        String
+  province    String
+  postal_code String
+  businesses  Business[]
+
+  @@map("locations")
+}
+
+model Sellable {
+  sellable_id   String       @id @default(auto()) @map("_id") @db.ObjectId
+  name          String
+  sellable_type SellableType
+  price         Float
+  description   String?
+  media         Json
+  is_active     Boolean      @default(true)
+  created_at    DateTime     @default(now())
+  business_id   String       @db.ObjectId
+
+  business         Business          @relation(fields: [business_id], references: [business_id])
+  transactionItems TransactionItem[]
+
+  @@map("sellables")
+}
+
+enum SellableType {
+  PRODUCT
+  SERVICE
+}
+
+///////////// INTERACTION ENTITIES /////////////
+
+model Dispute {
+  dispute_id     String        @id @default(auto()) @map("_id") @db.ObjectId
+  transaction_id String?       @unique @db.ObjectId
+  complainant_id String?       @db.ObjectId
+  reason         String
+  status         DisputeStatus @default(PENDING)
+  admin_response String?
+
+  transaction Transaction? @relation(fields: [transaction_id], references: [transaction_id])
+  complainant Customer?    @relation("Complaints", fields: [complainant_id], references: [user_id])
+
+  @@map("disputes")
+}
+
+enum DisputeStatus {
+  PENDING
+  RESOLVED
+  DISMISSED
+}
+
+model Review {
+  review_id   String   @id @default(auto()) @map("_id") @db.ObjectId
+  customer_id String   @db.ObjectId
+  business_id String   @db.ObjectId
+  rating      Int
+  review_text String?
+  media       Json?
+  review_date DateTime @default(now())
+  is_verified Boolean  @default(false)
+
+  customer Customer @relation(fields: [customer_id], references: [user_id])
+  business Business @relation(fields: [business_id], references: [business_id])
+
+  @@map("reviews")
+}
+
+model Transaction {
+  transaction_id    String            @id @default(auto()) @map("_id") @db.ObjectId
+  customer_id       String            @db.ObjectId
+  business_id       String            @db.ObjectId
+  status            TransactionStatus @default(PENDING)
+  reason_incomplete String?
+  date_initiated    DateTime          @default(now())
+  date_completed    DateTime?
+
+  customer Customer          @relation(fields: [customer_id], references: [user_id])
+  business Business          @relation(fields: [business_id], references: [business_id])
+  items    TransactionItem[]
+  dispute  Dispute?
+
+  @@map("transactions")
+}
+
+enum TransactionStatus {
+  PENDING
+  INCOMPLETE
+  COMPLETED
+  FINISHED
+}
+
+model TransactionItem {
+  item_id        String @id @default(auto()) @map("_id") @db.ObjectId
+  transaction_id String @db.ObjectId
+  sellable_id    String @db.ObjectId
+  quantity       Int
+  price          Float
+
+  sellable    Sellable    @relation(fields: [sellable_id], references: [sellable_id])
+  transaction Transaction @relation(fields: [transaction_id], references: [transaction_id])
+
+  @@map("transaction_items")
+}
+
+///////////// APPROVAL ENTITIES /////////////
+
+model UserVerification {
+  uv_id         String      @id @default(auto()) @map("_id") @db.ObjectId
+  user_id       String      @unique @db.ObjectId
+  uv_file       String
+  status        VerifStatus @default(PENDING)
+  reviewed_by   String      @db.ObjectId
+  response_date DateTime    @default(now())
+  denial_reason String?
+
+  user     User  @relation(fields: [user_id], references: [user_id])
+  reviewer Admin @relation(fields: [reviewed_by], references: [user_id])
+
+  @@map("user_verifications")
+}
+
+model BusinessVerification {
+  bv_id         String      @id @default(auto()) @map("_id") @db.ObjectId
+  business_id   String      @unique @db.ObjectId
+  bv_file       String
+  status        VerifStatus @default(PENDING)
+  reviewed_by   String      @db.ObjectId
+  response_date DateTime    @default(now())
+  denial_reason String?
+
+  business Business @relation(fields: [business_id], references: [business_id])
+  reviewer Admin    @relation(fields: [reviewed_by], references: [user_id])
+
+  @@map("business_verifications")
+}
+
+enum VerifStatus {
+  PENDING
+  APPROVED
+  DENIED
+}
+
+///////////// MESSAGE ENTITIES /////////////
+
+model ConversationParticipant {
+  id             String       @id @default(auto()) @map("_id") @db.ObjectId
+  conversation   Conversation @relation(fields: [conversationId], references: [id])
+  conversationId String       @db.ObjectId
+
+  user   User   @relation(fields: [userId], references: [user_id])
+  userId String @db.ObjectId
+
+  joinedAt DateTime @default(now())
+
+  @@unique([conversationId, userId])
+}
+
+model Conversation {
+  id           String                    @id @default(auto()) @map("_id") @db.ObjectId
+  participants ConversationParticipant[]
+  messages     Message[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("conversations")
+}
+
+model Message {
+  message_id String   @id @default(auto()) @map("_id") @db.ObjectId
+  content    String
+  timestamp  DateTime @default(now())
+
+  senderId String @db.ObjectId
+  sender   User   @relation("MessagesSent", fields: [senderId], references: [user_id])
+
+  conversationId String       @db.ObjectId
+  conversation   Conversation @relation(fields: [conversationId], references: [id])
+
+  @@map("messages")
+}
