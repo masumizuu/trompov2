@@ -84,7 +84,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/api/notifications/{id}/read', [MessageController::class, 'markNotificationAsRead'])->name('api.notifications.read');
     
     // Verification routes
-    Route::get('/verification/user/request', [VerificationController::class, 'showUserVerificationForm'])->name('user.verification.request  [VerificationController::class, 'showUserVerificationForm'])->name('user.verification.request');
+    Route::get('/verification/user/request', [VerificationController::class, 'showUserVerificationForm'])->name('user.verification.request');
     Route::post('/verification/user/request', [VerificationController::class, 'requestUserVerification']);
     
     Route::get('/verification/business/{id}/request', [VerificationController::class, 'showBusinessVerificationForm'])->name('business.verification.request');
