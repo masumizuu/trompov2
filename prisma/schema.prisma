@@ -34,8 +34,13 @@ model User {
   business_owner    BusinessOwner?
   user_verification UserVerification?
   messagesSent      Message[]                 @relation("MessagesSent")
+  messagesReceived  Message[]                 @relation("MessagesReceived")
   conversations     ConversationParticipant[]
   saved_businesses  SavedBusiness[]
+  notifications     Notification[]            @relation("UserNotifications")
+  
+  // For tracking read status of messages
+  readReceipts      ReadReceipt[]
 
   @@map("users")
 }
@@ -177,11 +182,26 @@ model Dispute {
   reason         String
   status         DisputeStatus @default(PENDING)
   admin_response String?
+  created_at     DateTime      @default(now())
+  updated_at     DateTime      @updatedAt
 
   transaction Transaction? @relation(fields: [transaction_id], references: [transaction_id])
   complainant Customer?    @relation("Complaints", fields: [complainant_id], references: [user_id])
+  messages    DisputeMessage[]
 
   @@map("disputes")
+}
+
+model DisputeMessage {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  dispute_id String   @db.ObjectId
+  user_id    String   @db.ObjectId
+  content    String
+  created_at DateTime @default(now())
+
+  dispute Dispute @relation(fields: [dispute_id], references: [dispute_id])
+
+  @@map("dispute_messages")
 }
 
 enum DisputeStatus {
@@ -292,14 +312,18 @@ model ConversationParticipant {
   userId String @db.ObjectId
 
   joinedAt DateTime @default(now())
+  lastSeen DateTime @default(now())
 
   @@unique([conversationId, userId])
+  @@map("conversation_participants")
 }
 
 model Conversation {
   id           String                    @id @default(auto()) @map("_id") @db.ObjectId
   participants ConversationParticipant[]
   messages     Message[]
+  title        String?                   // Optional title for group conversations
+  isGroup      Boolean                   @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -311,12 +335,61 @@ model Message {
   message_id String   @id @default(auto()) @map("_id") @db.ObjectId
   content    String
   timestamp  DateTime @default(now())
+  media      Json?    // For attachments, images, etc.
 
   senderId String @db.ObjectId
   sender   User   @relation("MessagesSent", fields: [senderId], references: [user_id])
 
+  // Add recipient relation for direct tracking of message recipients
+  recipientId String? @db.ObjectId
+  recipient   User?   @relation("MessagesReceived", fields: [recipientId], references: [user_id])
+
   conversationId String       @db.ObjectId
   conversation   Conversation @relation(fields: [conversationId], references: [id])
+  
+  // Track who has read this message
+  readBy         ReadReceipt[]
 
   @@map("messages")
+}
+
+// Track read status of messages
+model ReadReceipt {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  messageId String   @db.ObjectId
+  userId    String   @db.ObjectId
+  readAt    DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [user_id])
+  message Message @relation(fields: [messageId], references: [message_id])
+
+  @@unique([messageId, userId])
+  @@map("read_receipts")
+}
+
+///////////// NOTIFICATION ENTITIES /////////////
+
+model Notification {
+  id          String           @id @default(auto()) @map("_id") @db.ObjectId
+  userId      String           @db.ObjectId
+  type        NotificationType
+  title       String
+  content     String
+  isRead      Boolean          @default(false)
+  data        Json?            // Additional data related to the notification
+  createdAt   DateTime         @default(now())
+  readAt      DateTime?
+
+  user User @relation("UserNotifications", fields: [userId], references: [user_id])
+
+  @@map("notifications")
+}
+
+enum NotificationType {
+  MESSAGE
+  TRANSACTION
+  DISPUTE
+  VERIFICATION
+  REVIEW
+  SYSTEM
 }

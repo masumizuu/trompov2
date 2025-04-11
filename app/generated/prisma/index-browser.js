@@ -191,7 +191,17 @@ exports.Prisma.DisputeScalarFieldEnum = {
   complainant_id: 'complainant_id',
   reason: 'reason',
   status: 'status',
-  admin_response: 'admin_response'
+  admin_response: 'admin_response',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+};
+
+exports.Prisma.DisputeMessageScalarFieldEnum = {
+  id: 'id',
+  dispute_id: 'dispute_id',
+  user_id: 'user_id',
+  content: 'content',
+  created_at: 'created_at'
 };
 
 exports.Prisma.ReviewScalarFieldEnum = {
@@ -247,11 +257,14 @@ exports.Prisma.ConversationParticipantScalarFieldEnum = {
   id: 'id',
   conversationId: 'conversationId',
   userId: 'userId',
-  joinedAt: 'joinedAt'
+  joinedAt: 'joinedAt',
+  lastSeen: 'lastSeen'
 };
 
 exports.Prisma.ConversationScalarFieldEnum = {
   id: 'id',
+  title: 'title',
+  isGroup: 'isGroup',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -260,8 +273,29 @@ exports.Prisma.MessageScalarFieldEnum = {
   message_id: 'message_id',
   content: 'content',
   timestamp: 'timestamp',
+  media: 'media',
   senderId: 'senderId',
+  recipientId: 'recipientId',
   conversationId: 'conversationId'
+};
+
+exports.Prisma.ReadReceiptScalarFieldEnum = {
+  id: 'id',
+  messageId: 'messageId',
+  userId: 'userId',
+  readAt: 'readAt'
+};
+
+exports.Prisma.NotificationScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  type: 'type',
+  title: 'title',
+  content: 'content',
+  isRead: 'isRead',
+  data: 'data',
+  createdAt: 'createdAt',
+  readAt: 'readAt'
 };
 
 exports.Prisma.SortOrder = {
@@ -308,6 +342,15 @@ exports.VerifStatus = exports.$Enums.VerifStatus = {
   DENIED: 'DENIED'
 };
 
+exports.NotificationType = exports.$Enums.NotificationType = {
+  MESSAGE: 'MESSAGE',
+  TRANSACTION: 'TRANSACTION',
+  DISPUTE: 'DISPUTE',
+  VERIFICATION: 'VERIFICATION',
+  REVIEW: 'REVIEW',
+  SYSTEM: 'SYSTEM'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   Admin: 'Admin',
@@ -319,6 +362,7 @@ exports.Prisma.ModelName = {
   Location: 'Location',
   Sellable: 'Sellable',
   Dispute: 'Dispute',
+  DisputeMessage: 'DisputeMessage',
   Review: 'Review',
   Transaction: 'Transaction',
   TransactionItem: 'TransactionItem',
@@ -326,7 +370,9 @@ exports.Prisma.ModelName = {
   BusinessVerification: 'BusinessVerification',
   ConversationParticipant: 'ConversationParticipant',
   Conversation: 'Conversation',
-  Message: 'Message'
+  Message: 'Message',
+  ReadReceipt: 'ReadReceipt',
+  Notification: 'Notification'
 };
 
 /**
