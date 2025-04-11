@@ -343,7 +343,7 @@ const config = {
     "db": {
       "url": {
         "fromEnvVar": "DATABASE_URL",
-        "value": "mongodb://localhost:27017/trompo"
+        "value": "mongodb+srv://trompo:trompoUser@trompo.dnjbjq1.mongodb.net/trompo?retryWrites=true&w=majority&appName=trompo"
       }
     }
   },

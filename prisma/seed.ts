@@ -150,10 +150,14 @@ async function seed() {
     console.log("Available user keys:", Object.keys(createdUsers));
   }
 
-  await addBusinessWithOwner(createdUsers['BUSINESSOWNER_67f93ff8a0df2723514de1a8'], {
+  await addBusinessWithOwner(createdUsers['BUSINESSOWNER_67f94c3082299e43bbdd02bb'], {
     business_name: 'GalVloyo Smoked and Dried Fish Store',
     description: 'Authorized distributor of Skye Smoked and Dried Fish Products in Makati City.',
-    // category: 'Food & Beverages',
+    categoryRef: {
+      connect: {
+        category_name: "Food & Beverages"
+      }
+    },
     banner: 'https://6v5e0ohgur.ufs.sh/f/MOFsf8KgsHLAS1akgYZgnkwToRlBxMq3uOmGt96fKcZCsrWi',
     logo: 'https://6v5e0ohgur.ufs.sh/f/MOFsf8KgsHLAx7h2Cy8rOKNzis24n6wCm8ghdLaUJtoPFQ15',
     address: 'Tower C Jazz Residences, N. Garcia St., Brgy. Bel-Air',
@@ -165,10 +169,14 @@ async function seed() {
     { name: 'Tinapang Bangus', type: 'PRODUCT', price: 310, description: 'Smoked fish', media: ['https://6v5e0ohgur.ufs.sh/f/MOFsf8KgsHLAQFgw0jr4Hpwf0JT7zqod1e2YI5Pc6MViyvtU'] }
   ]);
 
-  await addBusinessWithOwner(createdUsers['BUSINESSOWNER_67f93ff8a0df2723514de1a9'], {
+  await addBusinessWithOwner(createdUsers['BUSINESSOWNER_67f94c3082299e43bbdd02bc'], {
     business_name: 'Beamfresh Water Refilling Station',
     description: 'Water refilling station.',
-    // category: 'Utilities & Services',
+    categoryRef: {
+      connect: {
+        category_name: "Utilities & Services"
+      }
+    },
     banner: 'https://6v5e0ohgur.ufs.sh/f/MOFsf8KgsHLAYndSKqxKELc0TedjOU9BsxZlqRwMof3D1Nkp',
     logo: 'https://6v5e0ohgur.ufs.sh/f/MOFsf8KgsHLAkPMYpgarngDG5HOehxEbSC0P7Kt49L8TXlIF',
     address: '194 Camastilisan',
@@ -177,10 +185,14 @@ async function seed() {
     { name: 'Purified Water', type: 'SERVICE', price: 25, description: 'Clean water gallon', media: ['https://6v5e0ohgur.ufs.sh/f/MOFsf8KgsHLAmz6Rq9I1TaSOFsHz2qKePjd6R17CuV3kL8xU'] },
   ]);
 
-  await addBusinessWithOwner(createdUsers['BUSINESSOWNER_67f93ff8a0df2723514de1aa'], {
+  await addBusinessWithOwner(createdUsers['BUSINESSOWNER_67f94c3082299e43bbdd02bd'], {
     business_name: 'Hamellek Hog & Poultry Supply',
     description: 'Selling feeds, vitamins, and other needs for happy and healthy farm animals.',
-    // category: 'Agricultural Supplies',
+    categoryRef: {
+      connect: {
+        category_name: "Agricultural Supplies"
+      }
+    },
     banner: 'https://6v5e0ohgur.ufs.sh/f/MOFsf8KgsHLABa85Vvwb0AyuM7lYtT1mW6LOwngRo5XerHvp',
     logo: 'https://6v5e0ohgur.ufs.sh/f/MOFsf8KgsHLAJy22o8zOAokWjfU57YwxlI3CrETdLayDRbpm',
     address: 'Quezon',
@@ -194,10 +206,14 @@ async function seed() {
   ]);
 
   // 3 UNVERIFIED BUSINESSES
-  await addBusinessWithOwner(createdUsers['BUSINESSOWNER_67f93ff9a0df2723514de1ae'], {
+  await addBusinessWithOwner(createdUsers['BUSINESSOWNER_67f94c3182299e43bbdd02c1'], {
     business_name: 'Unverified Business #1',
     description: 'Unverified placeholder biz.',
-    // category: 'Utilities & Services',
+    categoryRef: {
+      connect: {
+        category_name: "Utilities & Services"
+      }
+    },
     banner: 'https://6v5e0ohgur.ufs.sh/f/MOFsf8KgsHLAxgJ4uE8rOKNzis24n6wCm8ghdLaUJtoPFQ15',
     logo: 'https://6v5e0ohgur.ufs.sh/f/MOFsf8KgsHLAmzuajMe1TaSOFsHz2qKePjd6R17CuV3kL8xU',
     address: '194 Camastilisan',
@@ -206,32 +222,40 @@ async function seed() {
     { name: 'Placeholder Product', type: 'PRODUCT', price: 25, description: 'Placeholder product', media: ['https://6v5e0ohgur.ufs.sh/f/MOFsf8KgsHLAKhGyOOUIQlsiA6u9gbrXkBLpe5z1Ca3UcEDY'] },
   ]);
 
-//   await addBusinessWithOwner(createdUsers['BUSINESSOWNER_11'], {
-//     business_name: 'Unverified Business #2',
-//     description: 'Unverified placeholder biz.',
-//     category: 'Technology',
-//     banner: 'https://6v5e0ohgur.ufs.sh/f/MOFsf8KgsHLAxgJ4uE8rOKNzis24n6wCm8ghdLaUJtoPFQ15',
-//     logo: 'https://6v5e0ohgur.ufs.sh/f/MOFsf8KgsHLAmzuajMe1TaSOFsHz2qKePjd6R17CuV3kL8xU',
-//     address: '194 Camastilisan',
-//     contact_number: '09111222333',
-//   }, { city: 'Calaca', province: 'Batangas', postal_code: '4212' }, [
-//     { name: 'Placeholder Product', type: 'PRODUCT', price: 25, description: 'Placeholder product', media: ['https://6v5e0ohgur.ufs.sh/f/MOFsf8KgsHLAKhGyOOUIQlsiA6u9gbrXkBLpe5z1Ca3UcEDY'] },
-//   ]);
+  await addBusinessWithOwner(createdUsers['BUSINESSOWNER_67f94c3282299e43bbdd02c2'], {
+    business_name: 'Unverified Business #2',
+    description: 'Unverified placeholder biz.',
+    categoryRef: {
+      connect: {
+        category_name: "Technology"
+      }
+    },
+    banner: 'https://6v5e0ohgur.ufs.sh/f/MOFsf8KgsHLAxgJ4uE8rOKNzis24n6wCm8ghdLaUJtoPFQ15',
+    logo: 'https://6v5e0ohgur.ufs.sh/f/MOFsf8KgsHLAmzuajMe1TaSOFsHz2qKePjd6R17CuV3kL8xU',
+    address: '194 Camastilisan',
+    contact_number: '09111222333',
+  }, { city: 'Calaca', province: 'Batangas', postal_code: '4212' }, [
+    { name: 'Placeholder Product', type: 'PRODUCT', price: 25, description: 'Placeholder product', media: ['https://6v5e0ohgur.ufs.sh/f/MOFsf8KgsHLAKhGyOOUIQlsiA6u9gbrXkBLpe5z1Ca3UcEDY'] },
+  ]);
 
-//   await addBusinessWithOwner(createdUsers['BUSINESSOWNER_12'], {
-//     business_name: 'Unverified Business #3',
-//     description: 'Unverified placeholder biz.',
-//     category: 'Technology',
-//     banner: 'https://6v5e0ohgur.ufs.sh/f/MOFsf8KgsHLAxgJ4uE8rOKNzis24n6wCm8ghdLaUJtoPFQ15',
-//     logo: 'https://6v5e0ohgur.ufs.sh/f/MOFsf8KgsHLAmzuajMe1TaSOFsHz2qKePjd6R17CuV3kL8xU',
-//     address: '194 Camastilisan',
-//     contact_number: '09111222333',
-//   }, { city: 'Calaca', province: 'Batangas', postal_code: '4212' }, [
-//     { name: 'Placeholder Product', type: 'PRODUCT', price: 25, description: 'Placeholder product', media: ['https://6v5e0ohgur.ufs.sh/f/MOFsf8KgsHLAKhGyOOUIQlsiA6u9gbrXkBLpe5z1Ca3UcEDY'] },
-//   ]);
+  await addBusinessWithOwner(createdUsers['BUSINESSOWNER_67f94c3282299e43bbdd02c3'], {
+    business_name: 'Unverified Business #3',
+    description: 'Unverified placeholder biz.',
+    categoryRef: {
+      connect: {
+        category_name: "Technology"
+      }
+    },
+    banner: 'https://6v5e0ohgur.ufs.sh/f/MOFsf8KgsHLAxgJ4uE8rOKNzis24n6wCm8ghdLaUJtoPFQ15',
+    logo: 'https://6v5e0ohgur.ufs.sh/f/MOFsf8KgsHLAmzuajMe1TaSOFsHz2qKePjd6R17CuV3kL8xU',
+    address: '194 Camastilisan',
+    contact_number: '09111222333',
+  }, { city: 'Calaca', province: 'Batangas', postal_code: '4212' }, [
+    { name: 'Placeholder Product', type: 'PRODUCT', price: 25, description: 'Placeholder product', media: ['https://6v5e0ohgur.ufs.sh/f/MOFsf8KgsHLAKhGyOOUIQlsiA6u9gbrXkBLpe5z1Ca3UcEDY'] },
+  ]);
 
   const customerKey = Object.keys(createdUsers).find(key => key.includes('CUSTOMER'));
-  const customer = createdUsers[customerKey ? customerKey : 'CUSTOMER_67f93ff8a0df2723514de1a6']; 
+  const customer = createdUsers[customerKey ? customerKey : 'CUSTOMER_67f94c2f82299e43bbdd02b9']; 
   const businesses = await prisma.business.findMany({ include: { sellables: true } });
 
     // Then use it for transactions
