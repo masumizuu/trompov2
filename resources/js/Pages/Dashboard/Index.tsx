@@ -21,7 +21,7 @@ interface DashboardProps {
 
 export default function Dashboard({ stats, user }: DashboardProps) {
   return (
-    <Layout>
+    <Layout user={user}>
       <Head title="Dashboard" />
 
       <div className="p-6">

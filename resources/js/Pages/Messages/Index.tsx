@@ -13,6 +13,7 @@ import { Badge } from "@/Components/ui/badge"
 import { Tabs, TabsList, TabsTrigger } from "@/Components/ui/tabs"
 import { format } from "date-fns"
 import Echo from "laravel-echo"
+import { DropdownMenuItem } from "@/Components/ui/dropdown-menu"
 
 interface UserType {
   user_id: string
@@ -61,9 +62,13 @@ interface Conversation {
 interface PageProps {
   conversations: Conversation[]
   currentConversation: Conversation | null
+  auth: {
+    user: any
+  }
+  route: any
 }
 
-export default function Index({ conversations, currentConversation }: PageProps) {
+export default function Index({ conversations, currentConversation, auth, route: pageRoute }: PageProps) {
   const [message, setMessage] = useState("")
   const [searchQuery, setSearchQuery] = useState("")
   const [filteredConversations, setFilteredConversations] = useState(conversations)
@@ -108,8 +113,8 @@ export default function Index({ conversations, currentConversation }: PageProps)
   useEffect(() => {
     const echo = new Echo({
       broadcaster: "pusher",
-      key: process.env.MIX_PUSHER_APP_KEY,
-      cluster: process.env.MIX_PUSHER_APP_CLUSTER,
+      key: (window as any).PUSHER_APP_KEY || '',
+      cluster: (window as any).PUSHER_APP_CLUSTER || '',
       forceTLS: true,
     })
 
@@ -134,7 +139,7 @@ export default function Index({ conversations, currentConversation }: PageProps)
     if (!message.trim() || !currentConversation) return
 
     router.post(
-      route("messages.store", currentConversation.id),
+      pageRoute("messages.store", { id: currentConversation.id }),
       {
         content: message,
       },
@@ -173,8 +178,13 @@ export default function Index({ conversations, currentConversation }: PageProps)
     return format(date, "MMM d, yyyy")
   }
 
+  // Fix any remaining route call issues including the back button click
+  const goBack = () => {
+    router.get(pageRoute("messages.index"));
+  }
+
   return (
-    <DashboardLayout>
+    <DashboardLayout user={auth.user}>
       <Head title="Messages" />
 
       <div className="flex h-[calc(100vh-4rem)] overflow-hidden">
@@ -221,7 +231,7 @@ export default function Index({ conversations, currentConversation }: PageProps)
                         className={`p-3 border-b hover:bg-muted cursor-pointer ${
                           currentConversation?.id === conversation.id ? "bg-muted" : ""
                         }`}
-                        onClick={() => router.get(route("messages.show", conversation.id))}
+                        onClick={() => router.get(pageRoute("messages.show", { id: conversation.id }))}
                       >
                         <div className="flex items-center gap-3">
                           {conversation.isGroup ? (
@@ -288,7 +298,7 @@ export default function Index({ conversations, currentConversation }: PageProps)
                   variant="ghost"
                   size="icon"
                   className="md:hidden"
-                  onClick={() => router.get(route("messages.index"))}
+                  onClick={goBack}
                 >
                   <ChevronLeft className="h-5 w-5" />
                 </Button>
@@ -424,6 +434,13 @@ export default function Index({ conversations, currentConversation }: PageProps)
             </div>
           )}
         </div>
+      </div>
+
+      {/* Footer */}
+      <div className="p-4 border-t">
+        <DropdownMenuItem className="justify-center font-medium" onClick={goBack}>
+          View all messages
+        </DropdownMenuItem>
       </div>
     </DashboardLayout>
   )

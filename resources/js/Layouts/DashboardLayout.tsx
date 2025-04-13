@@ -52,12 +52,12 @@ export default function DashboardLayout({ user, children }: Props) {
               <div className="flex items-center">
                 <div className="flex-shrink-0">
                   <Avatar>
-                    <AvatarImage src={user.profile_image} alt={user.name} />
-                    <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
+                    <AvatarImage src={user.profile_picture} alt={user.first_name} />
+                    <AvatarFallback>{getInitials(user.first_name)}</AvatarFallback>
                   </Avatar>
                 </div>
                 <div className="ml-3">
-                  <div className="text-base font-medium">{user.name}</div>
+                  <div className="text-base font-medium">{user.first_name} {user.last_name}</div>
                   <div className="text-sm text-muted-foreground">{user.email}</div>
                 </div>
               </div>
@@ -126,12 +126,12 @@ export default function DashboardLayout({ user, children }: Props) {
               <div className="flex items-center">
                 <div>
                   <Avatar>
-                    <AvatarImage src={user.profile_image} alt={user.name} />
-                    <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
+                    <AvatarImage src={user.profile_picture} alt={user.first_name} />
+                    <AvatarFallback>{getInitials(user.first_name)}</AvatarFallback>
                   </Avatar>
                 </div>
                 <div className="ml-3">
-                  <p className="text-sm font-medium">{user.name}</p>
+                  <p className="text-sm font-medium">{user.first_name} {user.last_name}</p>
                   <p className="text-xs text-muted-foreground">{user.email}</p>
                 </div>
               </div>
@@ -146,7 +146,7 @@ export default function DashboardLayout({ user, children }: Props) {
           <div className="flex flex-1 justify-between px-4 md:px-6">
             <div className="flex flex-1"></div>
             <div className="ml-4 flex items-center md:ml-6 space-x-2">
-              <ChatNotification userId={user.id} />
+              <ChatNotification userId={user.user_id} />
 
               <form method="POST" action={route("logout")} className="hidden md:block">
                 <input

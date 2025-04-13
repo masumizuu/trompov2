@@ -18,6 +18,8 @@ use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\BusinessController as AdminBusinessController;
 use App\Http\Controllers\Admin\VerificationController as AdminVerificationController;
 
+use Inertia\Inertia;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -35,22 +37,44 @@ Route::get('/', function () {
 });
 
 // Authentication routes
-Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+// Route::get('/login', function () {
+//     return Inertia::render('Auth/Login');
+// })->name('login');
+
+// Route::post('/login', [LoginController::class, 'login']);
+// Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
+// Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
+// Route::post('/register', [RegisterController::class, 'register']);
+
+// Route::get('/forgot-password', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
+// Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
+
+// Route::get('/reset-password', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
+// Route::post('/reset-password', [ResetPasswordController::class, 'reset'])->name('password.update');
+
+// Route::get('/verify-otp', [OtpVerificationController::class, 'showVerificationForm'])->name('verify.otp.form');
+// Route::post('/verify-otp', [OtpVerificationController::class, 'verify'])->name('verify.otp');
+// Route::post('/resend-otp', [OtpVerificationController::class, 'resend'])->name('resend.otp');
+
+// Authentication routes
+Route::get('/login', fn () => Inertia::render('Auth/Login'))->name('login');
 Route::post('/login', [LoginController::class, 'login']);
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
-Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
+Route::get('/register', fn () => Inertia::render('Auth/Register'))->name('register');
 Route::post('/register', [RegisterController::class, 'register']);
 
-Route::get('/forgot-password', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
+Route::get('/forgot-password', fn () => Inertia::render('Auth/ForgotPassword'))->name('password.request');
 Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
 
-Route::get('/reset-password', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
+Route::get('/reset-password', fn () => Inertia::render('Auth/ResetPassword'))->name('password.reset');
 Route::post('/reset-password', [ResetPasswordController::class, 'reset'])->name('password.update');
 
-Route::get('/verify-otp', [OtpVerificationController::class, 'showVerificationForm'])->name('verify.otp.form');
+Route::get('/verify-otp', fn () => Inertia::render('Auth/OtpVerification'))->name('verify.otp.form');
 Route::post('/verify-otp', [OtpVerificationController::class, 'verify'])->name('verify.otp');
 Route::post('/resend-otp', [OtpVerificationController::class, 'resend'])->name('resend.otp');
+
 
 // Protected routes
 Route::middleware(['auth'])->group(function () {
@@ -119,3 +143,6 @@ Route::get('/sellables/{id}', [SellableController::class, 'show'])->name('sellab
 
 // Search routes
 Route::get('/search', [SearchController::class, 'index'])->name('search');
+
+// 404 page
+Route::fallback(fn () => Inertia::render('NotFound'));

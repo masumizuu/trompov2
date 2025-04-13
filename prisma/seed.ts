@@ -32,16 +32,23 @@ async function ensureCategory(name: string) {
 }
 
 async function ensureLocation(locationData: any) {
-  const existing = await prisma.location.findFirst({
+  // Find location by city, province, and postal_code combination
+  const existingLocation = await prisma.location.findFirst({
     where: {
       city: locationData.city,
       province: locationData.province,
       postal_code: locationData.postal_code,
-    },
+    }
   });
 
-  if (existing) return existing;
-  return await prisma.location.create({ data: locationData });
+  if (existingLocation) {
+    return existingLocation;
+  }
+
+  // Create new location if it doesn't exist
+  return await prisma.location.create({
+    data: locationData
+  });
 }
 
 // async function addBusinessWithOwner(user: any, businessData: any, locationData: any, sellablesData: any[]) {

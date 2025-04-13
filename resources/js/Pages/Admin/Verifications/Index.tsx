@@ -49,13 +49,13 @@ export default function VerificationsIndex({ userVerifications, businessVerifica
   const [isDialogOpen, setIsDialogOpen] = React.useState(false)
 
   const approveVerification = (verification: Verification) => {
-    router.post(route(`admin.verifications.${verification.type}.approve`, verification.id))
+    router.post(route(`admin.verifications.${verification.type}.approve`, { id: verification.id }))
   }
 
   const denyVerification = () => {
     if (!selectedVerification) return
 
-    router.post(route(`admin.verifications.${selectedVerification.type}.deny`, selectedVerification.id), {
+    router.post(route(`admin.verifications.${selectedVerification.type}.deny`, { id: selectedVerification.id }), {
       reason: denialReason,
     })
 
@@ -86,7 +86,7 @@ export default function VerificationsIndex({ userVerifications, businessVerifica
           {verifications.map((verification) => (
             <TableRow key={verification.id}>
               <TableCell className="font-medium">
-                <Link href={route(`admin.${type}s.show`, verification.entity.id)} className="hover:text-primary">
+                <Link href={route(`admin.${type}s.show`, { id: verification.entity.id })} className="hover:text-primary">
                   {verification.entity.name}
                 </Link>
               </TableCell>
@@ -109,7 +109,7 @@ export default function VerificationsIndex({ userVerifications, businessVerifica
               <TableCell className="text-right">
                 <div className="flex justify-end space-x-2">
                   <Button variant="outline" size="sm" asChild>
-                    <Link href={route(`admin.verifications.${type}.show`, verification.id)}>
+                    <Link href={route(`admin.verifications.${type}.show`, { id: verification.id })}>
                       <Eye className="h-4 w-4" />
                       <span className="sr-only">View</span>
                     </Link>

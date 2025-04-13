@@ -29,11 +29,14 @@ interface Notification {
   createdAt: string
 }
 
-export default function ChatNotification() {
+interface Props {
+  userId: String
+}
+
+export default function ChatNotification({userId}: Props) {
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [unreadCount, setUnreadCount] = useState(0)
   const [isOpen, setIsOpen] = useState(false)
-  const { route } = usePage().props
 
   const fetchNotifications = async () => {
     try {

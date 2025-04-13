@@ -39,7 +39,7 @@ interface UsersIndexProps {
 export default function UsersIndex({ users }: UsersIndexProps) {
   const confirmDelete = (userId: string) => {
     if (confirm("Are you sure you want to delete this user?")) {
-      router.delete(route("admin.users.destroy", userId))
+      router.delete(route("admin.users.destroy", { id: userId }))
     }
   }
 
@@ -103,13 +103,13 @@ export default function UsersIndex({ users }: UsersIndexProps) {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuItem asChild>
-                          <Link href={route("admin.users.show", user.id)}>
+                          <Link href={route("admin.users.show", { id: user.id })}>
                             <Eye className="h-4 w-4 mr-2" />
                             View
                           </Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild>
-                          <Link href={route("admin.users.edit", user.id)}>
+                          <Link href={route("admin.users.edit", { id: user.id })}>
                             <Edit className="h-4 w-4 mr-2" />
                             Edit
                           </Link>
@@ -132,7 +132,7 @@ export default function UsersIndex({ users }: UsersIndexProps) {
                 <PaginationItem>
                   <PaginationPrevious
                     href={users.current_page > 1 ? route("admin.users.index", { page: users.current_page - 1 }) : "#"}
-                    disabled={users.current_page === 1}
+                    aria-disabled={users.current_page === 1}
                   />
                 </PaginationItem>
 
@@ -154,7 +154,7 @@ export default function UsersIndex({ users }: UsersIndexProps) {
                         ? route("admin.users.index", { page: users.current_page + 1 })
                         : "#"
                     }
-                    disabled={users.current_page === users.last_page}
+                    aria-disabled={users.current_page === users.last_page}
                   />
                 </PaginationItem>
               </PaginationContent>
